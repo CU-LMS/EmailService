@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import idolLogo from '../../assets/idol_logo.png'
+import idolLogo from '../assets/idol_logo.png'
 import { AuthContext } from '../context/authContext'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
