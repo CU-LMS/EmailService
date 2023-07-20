@@ -15,7 +15,7 @@ const sendMultipleEmail = async (req, res) => {
                 usernameLms: recipient?.LMS_User_Id,
                 passwordLms: recipient?.LMS_Password,
                 usernameUni: recipient?.CUCHD_Email, 
-                passwordUni: recipient?.Cuchd_Password
+                passwordUni: recipient?.CUCHD_Password
             }
             const to = recipient.Email_Id
             await sendEmail(to, process.env.SENDDGRID_SENDER, 'UIMS and LMS credentials-Chandigarh University Online Learning', process.env.SENDGRID_CREDENTIALS_TEMPLATEID, dynamicTemplateData);
