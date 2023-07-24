@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const BASE_URL = "http://localhost:8800/api"
-export const PRODUCTION_URL= "http://13.233.59.136/api"
+export const PRODUCTION_URL= "https://emailapi.idolcu.in/api"
 
 
 let TOKEN;
