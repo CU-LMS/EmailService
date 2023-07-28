@@ -1,6 +1,9 @@
 const csv = require('csvtojson')
 const sendEmail = require('../utils/emailMultiple')
+const sendBulkTemplateEmailAwsSES = require('../utils/sendBulkTemplateEmailAwsSES')
+const fs = require('fs')
 
+//send multiple email using sendgrid
 const sendMultipleEmail = async (req, res) => {
     try {
         const file = req.file
@@ -26,6 +29,25 @@ const sendMultipleEmail = async (req, res) => {
     }
 }
 
+//send multiple email using amazon ses
+const sendMultipleEmailSES = async(req,res)=>{
+    try {
+        const file = req.file
+        if(!file){
+            throw new Error('Please upload a file')
+        }
+        const jsonArrayData = await csv().fromFile(req.file.path)
+        await sendBulkTemplateEmailAwsSES(jsonArrayData,req.file.path,req.body.type)
+        fs.unlink(req.file.path, (err)=>{
+            if(err) throw err;
+        })
+        res.status(201).json({msg: "All mail sent successfully"})
+    } catch (error) {
+        res.status(400).json({msg: error.message})
+    }
+}
+
 module.exports = {
-    sendMultipleEmail
+    sendMultipleEmail,
+    sendMultipleEmailSES
 }

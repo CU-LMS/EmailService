@@ -22,11 +22,12 @@ a, a:hover, a:focus {
 /* ------------ */
 
 .card {
-    box-shadow: 0px 4px 8px rgb(0 0 0 / 16%);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-radius: 6px;
     overflow: hidden;
     margin-bottom: 10px;
     background-color: #fff;
+    /* background-color: green; */
     border: none;
 }
 .card-body {

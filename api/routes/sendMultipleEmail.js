@@ -1,5 +1,5 @@
 const multer = require("multer");
-const { sendMultipleEmail } = require("../controller/sendMultipleEmailController");
+const { sendMultipleEmail, sendMultipleEmailSES } = require("../controller/sendMultipleEmailController");
 const router = require('express').Router()
 
 
@@ -17,7 +17,7 @@ const upload = multer({ storage: storage })
 
 // const upload = multer({ dest: './public/uploads' })
 
-router.route('/email/multiple').post(upload.single('uploadField'), sendMultipleEmail)
+router.route('/email/multiple').post(upload.single('uploadField'), sendMultipleEmailSES)
 
 
 

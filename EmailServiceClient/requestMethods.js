@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const BASE_URL = "http://localhost:8800/api"
+export const BASE_URL = "http://localhost:8801/api"
 export const PRODUCTION_URL= "https://emailapi.idolcu.in/api"
 
 

@@ -1,5 +1,5 @@
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey('put_your_key_here');
 
 const sendEmail = async (to,from ,subject, templateId, dynamicTemplateData) => {
     const msg = {

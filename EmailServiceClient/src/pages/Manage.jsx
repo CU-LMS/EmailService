@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { userRequest } from '../../requestMethods'
 import { localDateStringToDDMMYYYY } from '../../utils/util'
-import { Modal, Select, Spin, message } from 'antd'
+import { Modal, Select, Spin } from 'antd'
 import { json } from 'react-router-dom'
 import { AuthContext } from '../context/authContext'
+import Swal from 'sweetalert2'
 const Manage = () => {
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
@@ -13,7 +14,6 @@ const Manage = () => {
     const [selectIsAdmin, setSelectedIsAdmin] = useState(null)
     const [selectedRole, setSelectedRole] = useState(null)
     const { user } = useContext(AuthContext)
-    const [messageApi, contextHolder] = message.useMessage();
     const showModal = () => {
         setOpen(true);
     };
@@ -27,17 +27,19 @@ const Manage = () => {
                 approvedBy: user?.email
             })
             if (res.data) {
-                messageApi.open({
-                    type: 'success',
-                    content: 'Action Done',
-                });
+                Swal.fire(
+                    'So fast!',
+                    'Role changed successfully!',
+                    'success'
+                  )
                 getAllUsers()
             }
         } catch (error) {
-            messageApi.open({
-                type: 'error',
-                content: 'there is some error, please try again later',
-            });
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong, try again later!',
+              })
         }
         setConfirmLoading(false)
         setOpen(false)
@@ -59,18 +61,20 @@ const Manage = () => {
         try {
             const res = await userRequest.delete(`/auth/user/${user?.email}`)
             if (res.data) {
-                messageApi.open({
-                    type: 'success',
-                    content: 'Action Done',
-                });
+                Swal.fire(
+                    'So fast!',
+                    'User has been deleted succesfully!',
+                    'success'
+                  )
                 getAllUsers()
             }
 
         } catch (error) {
-            messageApi.open({
-                type: 'error',
-                content: 'There is some error, please try again later',
-            });
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong, try again later!',
+              })
         }
     }
     const changeRole = async (user) => {
@@ -93,7 +97,6 @@ const Manage = () => {
     return (
         <>
             <div className='d-flex justify-content-center'>
-                {contextHolder}
                 <Spin spinning={loading} size='large'>
                     {users.length > 0 && !loading == true ? <div className='tableWrapper mt-2'>
                         <table className='table text-center table-striped table-hover table-bordered'>

@@ -2,20 +2,45 @@ import { useState } from "react";
 import { customAlphabet } from 'nanoid'
 const nanoid = customAlphabet('1234567890abcdef', 10)
 import { publicRequest, userRequest } from '../../requestMethods'
-import { Spin } from "antd";
+import { Radio, Spin } from "antd";
 import Papa from 'papaparse';
-const RealValidData = ['UID', 'Student_Name', 'Email_Id', 'CUCHD_Email', 'CUCHD_Password', 'LMS_User_Id', 'LMS_Password']
+import Swal from 'sweetalert2'
+
+const RealValidDataOl = ['UID', 'Student_Name', 'Email_Id', 'CUCHD_Email', 'CUCHD_Password', 'LMS_User_Id', 'LMS_Password']
+const RealValidDataOdl = ['UID', 'Student_Name', 'Email_Id', 'CUCHD_Email', 'CUCHD_Password', 'LMS_User_Id', 'LMS_Password']
+const RealValidDataPendingDocuments = ['UserId', 'Name', 'Email_Id', 'Pending_Documents', 'DateString']
 
 const Home = () => {
   const [selectedfile, SetSelectedFile] = useState('')
   const [uploading, setUploading] = useState(false)
   const [dataHeaders, setDataHeaders] = useState([])
   const [isDataValid, setIsDataValid] = useState(false)
+  const [typeOfBulkEmail, setTypeOfBulkEmail] = useState("ol")
+
+  const handleChangeRadio = (e)=>{
+    setTypeOfBulkEmail(e.target.value)
+  }
+  const getRealDataHeadersByType = (type)=>{
+    switch (type) {
+      case 'ol':
+        return RealValidDataOl
+      case 'odl':
+        return RealValidDataOdl
+      case 'pending_documents':
+        return RealValidDataPendingDocuments
+      default:
+        return []
+    }
+  }
 
   const checkDataValid = (dataArray) => {
-    const isEveryValuePresent = RealValidData.every((value) => dataArray.includes(value));
+    const isEveryValuePresent = getRealDataHeadersByType(typeOfBulkEmail).every((value) => dataArray.includes(value));
     if (isEveryValuePresent === false) {
-      alert('Please upload a file which have headears with same naming convention')
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please upload a file which have headears with same naming convention as given below!',
+      })
       setIsDataValid(false)
       SetSelectedFile('')
       setData([])
@@ -72,29 +97,49 @@ const Home = () => {
     if (selectedfile !== '') {
       const formData = new FormData()
       formData.append("uploadField", selectedfile.realFile)
+      formData.append('type', typeOfBulkEmail)
       try {
         const res = await userRequest.post("/send/email/multiple", formData)
         if (res.data) {
           setUploading(false)
           SetSelectedFile('')
-          alert('All messages are sent successfully')
+          Swal.fire(
+            'So fast!',
+            'Your all emails are sent!',
+            'success'
+          )
         }
       } catch (error) {
         console.log(error.message)
-        alert('There is some error, try again later')
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong, try again later!',
+        })
       }
     } else {
-      alert('Please select file')
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please check the file you provided!',
+      })
     }
   }
   const handleClear = () => {
     SetSelectedFile('')
-    setData([])
+    setDataHeaders([])
     setUploading(false)
   }
   console.log(dataHeaders)
   return (
     <>
+    <div className="text-center">
+     <Radio.Group defaultValue={typeOfBulkEmail} buttonStyle="solid" size="large" onChange={handleChangeRadio} value={typeOfBulkEmail}>
+      <Radio.Button value="ol">OL Type</Radio.Button>
+      <Radio.Button value="pending_documents">Pending Documents Type</Radio.Button>
+      <Radio.Button value="odl">ODL Type</Radio.Button>
+    </Radio.Group>
+    </div>
       <Spin spinning={uploading}>
         <div className="fileupload-view">
           <div className="row justify-content-center m-0">
@@ -149,7 +194,7 @@ const Home = () => {
           <ul className="list-group">
             <li className="list-group-item active py-1" aria-current="true"><span className="text-danger">*</span>Mandatory headers of file<span className="text-danger">*</span></li>
             {
-              RealValidData.map(value=><li className="list-group-item py-1" key={value}>{value}</li>)
+            getRealDataHeadersByType(typeOfBulkEmail).map(value=><li className="list-group-item py-1" key={value}>{value}</li>)
             }
           </ul>
         </div>
